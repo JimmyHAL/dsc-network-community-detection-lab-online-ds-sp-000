@@ -170,7 +170,7 @@ def plot_girvan_newman(G, clusters):
 sns.set_style('white')
 plot_girvan_newman(G_subset, gn_clusters[20])
 ```
-'''python
+```python
 # Because the Network is still dense and names are long, organizing the clusters as a Pandas dataframe is appropriate
 clusters = pd.DataFrame(gn_clusters[20]).transpose()
 clusters.columns = ['Cluster{}'.format(i) for i in range(1,len(clusters.columns)+1)]
@@ -181,7 +181,7 @@ clusters
 # cluster 2 is a social hodgepodge,
 # cluster3 is outdoor enthusiasts,
 # cluster4 is gamers, and so forth
-'''
-## Summary
+```
+### Summary
 
 In this lab, you got another chance to practice your network clustering skills, investigating a meetup dataset of events and groups surrounding the Nashville area. If you're up for the challenge, feel free to continue investigating the dataset and trying to cluster users or events!                                                                                                                                                               
