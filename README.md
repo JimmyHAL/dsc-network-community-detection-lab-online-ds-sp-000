@@ -170,7 +170,7 @@ def plot_girvan_newman(G, clusters):
 sns.set_style('white')
 plot_girvan_newman(G_subset, gn_clusters[20])
 ```
-'''
+'''python
 # Because the Network is still dense and names are long, organizing the clusters as a Pandas dataframe is appropriate
 clusters = pd.DataFrame(gn_clusters[20]).transpose()
 clusters.columns = ['Cluster{}'.format(i) for i in range(1,len(clusters.columns)+1)]
