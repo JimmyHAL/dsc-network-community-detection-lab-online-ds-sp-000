@@ -19,17 +19,17 @@ To get started, load the dataset `'nashville-meetup/group-edges.csv'` as a panda
 
 
 ```python
-# Your code here
-
-groups = None
+import pandas as pd
+groups = pd.read_csv('nashville-meetup/group-edges.csv', index_col=0)
+groups.head()
 ```
 
 To add some descriptive data, import the file `'nashville-meetup/meta-groups.csv'`.
 
 
 ```python
-# Your code here
-groups_meta = None
+groups_meta = pd.read_csv('nashville-meetup/meta-groups.csv')
+groups_meta.head()
 ```
 
 ## Transform to a Network Representation
@@ -38,15 +38,25 @@ Take the Pandas DataFrame and transform it into a graph representation via Netwo
 
 
 ```python
-# Your code here
+import networkx as nx
+
+group_dict = dict(zip(groups_meta.group_id, groups_meta.group_name))
+G = nx.Graph()
+for row in groups.index:
+    g1 = group_dict[groups.group1[row]]
+    g2 = group_dict[groups.group2[row]]
+    weight = groups.weight[row]
+    G.add_edge(g1, g2, weight=weight)
 ```
 
 ## Visualize the Network
 
 
 ```python
-# Your code here
-```
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+nx.draw(G, pos=nx.spring_layout(G, k=2, seed=5), alpha=.8, node_color='#32cefe')```
 
 ## Refine the Visual
 
@@ -54,8 +64,27 @@ As you should see, the initial visualization is a globular mess! Refine the visu
 
 
 ```python
-# Your code here
-```
+for i in range(0,100,5):
+    print('{}th percentile: {}'.format(i,groups.weight.quantile(q=i/100)))
+ 
+ ```
+ 
+ ```python
+threshold = 5
+G_subset = nx.Graph()
+for row in groups.index:
+    g1 = group_dict[groups.group1[row]]
+    g2 = group_dict[groups.group2[row]]
+    weight = groups.weight[row]
+    if weight > threshold:
+        G_subset.add_edge(g1, g2, weight=weight)
+plt.figure(figsize=(30,20))
+nx.draw(G_subset, pos=nx.spring_layout(G_subset, k=2, seed=5),
+        alpha=.8, node_color='#32cefe', node_size=5000,
+        with_labels=True, font_size=12, font_weight='bold')
+ 
+ ```
+ 
 
 ## Cluster the Network
 
@@ -63,8 +92,10 @@ Now, that the dataset is a little more manageable, try clustering the remaining 
 
 
 ```python
-# Your code here
-```
+gn_clusters = list(nx.algorithms.community.centrality.girvan_newman(G_subset))
+for n, clusters in enumerate(gn_clusters):
+    print('After removing {} edges, there are {} clusters.'.format(n, len(clusters)))
+ ```
 
 ## Determine An Optimal Clustering Schema
 
@@ -121,7 +152,23 @@ Analyze the output of your clustering schema. Do any clusters of groups stand ou
 
 
 ```python
-# Your code here
+def plot_girvan_newman(G, clusters):
+    #Your code here
+    fig = plt.figure(figsize=(35,20))
+    colors = ['#1cf0c7','#ffd43d','#00b3e6','#32cefe','#efefef',
+              '#1443ff','#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99',
+              '#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99',
+              '#b15928','#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3',
+              '#fdb462','#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5',
+              '#ffed6f','#bf812d','#dfc27d','#f6e8c3','#f5f5f5','#c7eae5',
+              '#80cdc1', '#35978f', '#01665e', '#003c30']
+    for n , c in enumerate(clusters):
+        ci = G.subgraph(c)
+        nx.draw(ci, pos=nx.spring_layout(G_subset, k=3.6, seed=3), with_labels=True, node_color=colors[n],
+                alpha=0.8, node_size=20000, font_weight='bold', font_size=20)
+    plt.show()
+sns.set_style('white')
+plot_girvan_newman(G_subset, gn_clusters[20])
 ```
 
 ## Summary
