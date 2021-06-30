@@ -73,6 +73,46 @@ Finally, determine a final clustering organization.
 
 ```python
 # Your code here
+import numpy as np
+import seaborn as sns
+sns.set_style('darkgrid')
+colors = ['#1cf0c7','#ffd43d','#00b3e6','#32cefe','#efefef',
+          '#1443ff','#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99',
+          '#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99',
+          '#b15928','#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3',
+          '#fdb462','#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5',
+          '#ffed6f','#bf812d','#dfc27d','#f6e8c3','#f5f5f5','#c7eae5',
+          '#80cdc1', '#35978f', '#01665e', '#003c30']
+
+fig = plt.figure(figsize=(12,10))
+
+x = [n+1 for n in range(len(gn_clusters))]
+
+max_cluster_size = [max([len(c) for c in cluster]) for cluster in gn_clusters]
+plt.plot(x,max_cluster_size, color=colors[0], label='Max Cluster Size')
+
+min_cluster_size = [min([len(c) for c in cluster]) for cluster in gn_clusters]
+plt.plot(x,min_cluster_size, color=colors[1], label='Minimum Cluster Size')
+
+mean_cluster_size = [np.mean([len(c) for c in cluster]) for cluster in gn_clusters]
+plt.plot(x,mean_cluster_size, color=colors[2], label='Mean Cluster Size')
+
+median_cluster_size = [np.median([len(c) for c in cluster]) for cluster in gn_clusters]
+plt.plot(x,median_cluster_size, color=colors[3], label='Median Cluster Size')
+
+single_node_clusters = [sum([1 if len(c)==1 else 0 for c in cluster]) for cluster in gn_clusters]
+plt.plot(x,single_node_clusters, color=colors[6], label='Number of Single Node Clusters')
+
+small_clusters = [sum([1 if len(c)<=5 else 0 for c in cluster ]) for cluster in gn_clusters]
+plt.plot(x,small_clusters, color=colors[5], label='Number of Small Clusters (5 or less nodes)')
+
+plt.legend(loc=(1.01,.75), fontsize=14)
+plt.title('Cluster Size Metrics versus Number of Edges Removed', fontsize=14)
+plt.xlabel('Number of Edges Removed', fontsize=14)
+plt.ylabel('Cluster Metric')
+plt.ylim(0,80)
+plt.yticks(ticks=list(range(0,80,5)))
+plt.show()
 ```
 
 ## Visualize the Clusters
